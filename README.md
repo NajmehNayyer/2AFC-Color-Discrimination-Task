@@ -58,10 +58,7 @@ Each trial captures:
 
 1. Navigate to the Experiment folder
 2. Ensure `Constants.py` and `experiment.py` are in the same directory
-3. Run the experiment:
-   ```bash
-   python Experiment/experiment.py
-   ```
+3. Run the experiment: `python Experiment/experiment.py`
 4. Complete the dialog box (Participant ID, eye, adaptation status)
 5. Follow on-screen instructions
 6. Data will be saved as `{ParticipantID}_{Eye}_{AdaptationStatus}.csv`
