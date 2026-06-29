@@ -101,5 +101,5 @@ Edit `Constants.py` to customize your experiment:
 5. **Session Logs:** Back up CSV files immediately after each session
 
 
-## Preview
+## 👁️ Preview
 https://github.com/user-attachments/assets/c88aae96-d0ae-4f08-8d9b-7814fbfb474b
