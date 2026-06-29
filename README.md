@@ -31,7 +31,7 @@ Participants select between two color alternatives (blue or yellow), enabling pr
 - Instant data recording with automatic CSV output
 - Escape key functionality for safe experiment termination
 
-### **6. Comprehensive Data Logging**
+### **5. Comprehensive Data Logging**
 Each trial captures:
 - Participant identifier
 - Eye tested (left/right)
