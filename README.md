@@ -2,7 +2,6 @@
 
 A Python-based two-alternative forced-choice (2AFC) color discrimination experiment designed to investigate chromatic adaptation and color perception in human vision. This experiment employs rigorous psychophysical methods to measure perceptual discrimination abilities under different adaptation states.
 
----
 
 ## 📊 Dataset Overview
 
@@ -10,7 +9,6 @@ A Python-based two-alternative forced-choice (2AFC) color discrimination experim
 - **Experimental Conditions:** 2 (Adaptation vs. No Adaptation)
 - **Total Responses:** 9,600
 
----
 
 ## 🔬 Core Features
 
@@ -41,7 +39,6 @@ Each trial captures:
 - Correctness (binary: correct/incorrect)
 - Trial index and temporal information
 
----
 
 ## 📁 Project Structure
 
@@ -57,8 +54,6 @@ Each trial captures:
     └── Sample Data/                   # Example datasets for testing
 ```
 
----
-
 ### **Quick Start**
 
 1. Navigate to the Experiment folder
@@ -71,7 +66,6 @@ Each trial captures:
 5. Follow on-screen instructions
 6. Data will be saved as `{ParticipantID}_{Eye}_{AdaptationStatus}.csv`
 
----
 
 ## ⚙️ Configurable Parameters
 
@@ -88,11 +82,8 @@ Edit `Constants.py` to customize your experiment:
 
 **Pro Tip:** Set `reps=1` for a quick test run before data collection!
 
----
 
-## 📊 Data Analysis & Visualization
-
-### **Design Validation Notebooks**
+## 📊 Data Visualization
 
 **`Design/Visualization.ipynb`**
 - Visualizes the complete color palette
@@ -100,7 +91,6 @@ Edit `Constants.py` to customize your experiment:
 - Provides psychometric curve analysis
 - Uses sample data for demonstration
 
----
 
 ## 💡 Tips for Best Results
 
@@ -109,6 +99,7 @@ Edit `Constants.py` to customize your experiment:
 3. **Practice:** Have participants complete 5-10 practice trials first
 4. **Monitor Calibration:** Ensure monitor color accuracy with a colorimeter if possible
 5. **Session Logs:** Back up CSV files immediately after each session
+
 
 ## Preview
 https://github.com/user-attachments/assets/c88aae96-d0ae-4f08-8d9b-7814fbfb474b
