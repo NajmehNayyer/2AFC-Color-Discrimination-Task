@@ -23,7 +23,6 @@ adapt_eye = info.data[1]
 respond_eye = info.data[2]
 adapstatus = info.data[3]
 
-
 # ====================================
 # Experiment Colors
 # ====================================
