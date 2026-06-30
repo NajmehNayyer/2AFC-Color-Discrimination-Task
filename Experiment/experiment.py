@@ -102,7 +102,7 @@ try:
         keys = event.waitKeys(keyList=['b', 'y', 'escape'])
         if keys == 'escape':
             core.quit()
-        respond = keys[0]
+        else: respond = keys[0]
 
         # Check whether the answer is correct or not
         if (respond == 'y' and trial['name'] == 'yellow') or (respond == 'b' and trial['name'] == 'blue'):
