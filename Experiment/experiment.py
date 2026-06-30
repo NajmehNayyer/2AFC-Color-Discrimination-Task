@@ -2,125 +2,133 @@ from psychopy import visual, core, event, data, gui
 import numpy as np
 from constants import *
 
+# ====================================
+# Dialog Box
+# ====================================
 
-#making the dialog box
+# Create the dialog box
 info = gui.Dlg(title="2AFC Color Discrimination")
-info.addField("Participant ID:")
-info.addField("eye:", choices=["Left", "Right"])
-info.addText('Choose the non-adapted eye in adaptation condition.')
-info.addField("Adaptation status:", choices=["No_Adaptation", "Adaptation"])
+info.addField("Subject's Number:", required=True)
+info.addField("Adapting eye:", choices=["Both", "Left", "Right"], required=True)
+info.addField("Responder eye:", choices=["Both", "Left", "Right"], required=True)
+info.addField("Adaptation status:", choices=["No_Adaptation", "Adaptation"], required=True)
 
-
-#displaying the box and saving the data
+# Display
 okdata = info.show()
 if not okdata: core.quit()
-IDs = okdata[0]
-eye = okdata[1] if len(okdata) > 1 else "" 
-adapstatus = okdata[2] if len(okdata) > 2 else ""
+
+# Save the data in variables
+ID = info.data[0]
+adapt_eye = info.data[1]
+respond_eye = info.data[2]
+adapstatus = info.data[3]
 
 
-#Generating experiment's main colors
-rand = np.arange(0, 250, 25)
-rand2 = list(reversed(rand))
+# ====================================
+# Experiment Colors
+# ====================================
 
-def rgbToPsy(num):
-    num = num / 127.5 - 1
-    return num
+# RGB values for the experiment colors
+blue_steps = np.arange(0, 250, 25)
+yellow_steps = list(reversed(blue_steps))
 
+# Convert the color from the 0-255 RGB scale to the PsychoPy scale
+def rgb_to_psy(color):
+    return [c / 127.5 - 1 for c in color]
 
-blue = []
-for each_b in rand:
-    rgb = [round(float(rgbToPsy(each_b)), 4), round(float(rgbToPsy(each_b)), 4), round(float(rgbToPsy(255)), 4)]
-    blue.append({'rgb': rgb})
+# RGB of each spectrum
+blue = [rgb_to_psy([b, b, 255]) for b in blue_steps]
+yellow = [rgb_to_psy([255, 255, y]) for y in yellow_steps]
 
-yellow = []
-for each_y in rand2:
-    rgb = [round(float(rgbToPsy(255)), 4), round(float(rgbToPsy(255)), 4), round(float(rgbToPsy(each_y)), 4)]
-    yellow.append({'rgb': rgb})
+# Finalize the colors for the experiment
+color_data = [('yellow', rgb) for rgb in yellow] + [('blue', rgb) for rgb in blue]
+colors = [{'index': i, 'rgb': rgb, 'name': name} for i, (name, rgb) in enumerate(color_data)]
 
-# create a window
-win =visual.Window(size=DISPSIZE, units='norm', fullscr=True, color=BGC)
+# ====================================
+# Experiment Setup
+# ====================================
 
+# Window
+win = visual.Window(size=DISPSIZE, units='norm', fullscr=True, color=BGC)
 
-# categorize everything about colors for output.csv
-color_data = yellow + blue
-yellow_rgbs = [c['rgb'] for c in yellow]
-colors = [{'index': i, 'rgb': c['rgb'], 'name': 'yellow' if c['rgb'] in yellow_rgbs else 'blue'}
-          for i, c in enumerate(color_data)]
+# Instructions
+instruct = visual.TextStim(win, text="Look at the color with one eye.\n"
+                                      "Press 'b' for blue, 'y' for yellow.\n"
+                                      "Press 'space' to start", pos=(0, 0))
+instruct.draw()  # Write
+win.flip()  # Update the window
 
+# Quit with the "esc" key
+prim_keys = event.waitKeys(keyList=['space', 'escape'])
+if 'escape' in prim_keys: core.quit()
 
-# definie the triala and save the essential info
+# Define the trials
 trials = data.TrialHandler(colors, nReps=reps, method='random')
-trials.extraInfo = {'participant': IDs, 'eye': eye, 'adaptstatus': adapstatus}
 
-
-# shapes and texts
-stim = visual.Rect(win, width=2, height=2, fillColor='white')
-circle = visual.Circle(win, radius=6, edges=64, units='pix', lineColor=BGC, fillColor=BGC, pos=(0, 0))
-instruct = visual.TextStim(win, text= "Look at the color with one eye.\n"
-                                   "Press 'b' for blue, 'y' for yellow.\n"
-                                   "Press 'space' to start", pos=(0, 0))
-
-
-#show instructions, quit button
-instruct.draw()
-win.flip()
-keys = event.waitKeys(keyList=['space', 'escape'])
-if 'escape' in keys: core.quit()
-
-
-#collect the data
-exp = data.ExperimentHandler(dataFileName=f'{IDs}_{eye}_{adapstatus}.csv')
+# Define the experiment
+exp = data.ExperimentHandler(dataFileName=f'{ID}_adapt_{adapt_eye}_responder_{respond_eye}_{adapstatus}.csv')
+exp.extraInfo = {'participant': ID, 'adapting_eye': adapt_eye, 'responding_eye': respond_eye, 'adaptstatus': adapstatus}  # Metadata
 exp.addLoop(trials)
 
+# Stimulus and fixation properties
+stim = visual.Rect(win, width=2, height=2, fillColor='white')
+circle = visual.Circle(win, radius=6, edges=64, units='pix', lineColor=BGC, fillColor=BGC, pos=(0, 0))
 
-#define the first adaptation status (30")
-if adapstatus == "Adaptation":
-    adaptstim = visual.Rect(win, width=2, height=2, fillColor=adaptcolor )
-    adaptstim.draw()
-    circle.draw()
-    win.flip()
-    core.wait(long)
+# ===================
+# Experiment
+# ===================
+try:
 
-
-#start trials
-for trial in trials:
-    stim.fillColor = trial['rgb']
-    stim.draw()
-    circle.draw()
-    win.flip()
-    core.wait(0.2)
-
- #keys that you can choose
-    keys = event.waitKeys(keyList=['b', 'y', 'escape'])
-    if 'escape' in keys: core.quit()
-    trials.addData('response', keys[0])
-
- #save whether they chose the right key(1), or not(0)
-    if keys[0] == 'y' and trial['name'] == 'yellow' :
-        answer = '1'
-    elif keys[0] == 'b' and trial['name'] == 'blue' :
-        answer = '1'
-    else :
-        answer = "0"
-
- #save the data of each trial, move to next one
-    trials.addData('answer', answer)
-    exp.nextEntry()
-    win.flip()
-    core.wait(0.2)
-
- #show the adaptation color for 10' between trials
+    # Initial adaptation
     if adapstatus == "Adaptation":
+        adaptstim = visual.Rect(win, width=2, height=2, fillColor=adaptcolor)
         adaptstim.draw()
         circle.draw()
         win.flip()
-        core.wait(short)
+        core.wait(long)
+
+    for trial in trials:
+
+        # Draw the stimulus
+        stim.fillColor = trial['rgb']
+        stim.draw()
+
+        # Draw the fixation
+        circle.draw()
+
+        # Update the screen
         win.flip()
 
+        # Store the response
+        keys = event.waitKeys(keyList=['b', 'y', 'escape'])
+        if keys == 'escape':
+            core.quit()
+        respond = keys[0]
 
-#save csv, end it
-exp.saveAsWideText(f'{IDs}_{eye}_{adapstatus}.csv')
-exp.close()
-win.close()
-core.quit()
+        # Check whether the answer is correct or not
+        if (respond == 'y' and trial['name'] == 'yellow') or (respond == 'b' and trial['name'] == 'blue'):
+            answer = '1'
+        else: answer = "0"
+
+        # Add the response and correctness to the output
+        trials.addData('response', respond)
+        trials.addData('answer', answer)
+
+        # Trial completed
+        exp.nextEntry()
+
+        # Inter-trial adaptation
+        if adapstatus == "Adaptation":
+            adaptstim.draw()
+            circle.draw()
+            win.flip()
+            core.wait(short)
+
+finally:
+
+    # Save and end the experiment
+    exp.saveAsWideText(exp.dataFileName)
+    exp.close()
+
+    win.close()
+    core.quit()
