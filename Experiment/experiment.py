@@ -74,7 +74,6 @@ trials = data.TrialHandler(colors, nReps=reps, method='random')
 
 # Define the experiment
 exp = data.ExperimentHandler(dataFileName=f'{ID}_adapt_{adapt_eye}_responder_{respond_eye}_{adapstatus}.csv')
-exp.extraInfo = {'participant': ID, 'adapting_eye': adapt_eye, 'responding_eye': respond_eye, 'adaptstatus': adapstatus}  # Metadata
 exp.addLoop(trials)
 
 try:
