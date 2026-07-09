@@ -41,7 +41,7 @@ color_data = [('yellow', rgb) for rgb in yellow] + [('blue', rgb) for rgb in blu
 colors = [{'index': i, 'rgb': rgb, 'name': name} for i, (name, rgb) in enumerate(color_data)]
 
 # ====================================
-# Experiment Setup
+# Set-up
 # ====================================
 
 # Window
@@ -50,6 +50,10 @@ win = visual.Window(size=DISPSIZE, units='norm', fullscr=True, color=BGC)
 # Global 'escape' key for finishing the experiment
 event.globalKeys.add(key='escape', func=quit_experiment)
 
+# ====================================
+# Shapes
+# ====================================
+
 # Instructions
 instruct = visual.TextStim(win, text="Look at the color with one eye.\n"
                                       "Press 'b' for blue, 'y' for yellow.\n"
@@ -57,8 +61,13 @@ instruct = visual.TextStim(win, text="Look at the color with one eye.\n"
 instruct.draw()  # Write
 win.flip()  # Update the window
 
-# Quit with the "esc" key
-event.waitKeys(keyList=['space'])
+# Stimulus and fixation properties
+stim = visual.Rect(win, width=2, height=2, fillColor='white')
+circle = visual.Circle(win, radius=6, edges=64, units='pix', lineColor=BGC, fillColor=BGC, pos=(0, 0))
+
+# ===================
+# Experiment
+# ===================
 
 # Define the trials
 trials = data.TrialHandler(colors, nReps=reps, method='random')
@@ -68,16 +77,9 @@ exp = data.ExperimentHandler(dataFileName=f'{ID}_adapt_{adapt_eye}_responder_{re
 exp.extraInfo = {'participant': ID, 'adapting_eye': adapt_eye, 'responding_eye': respond_eye, 'adaptstatus': adapstatus}  # Metadata
 exp.addLoop(trials)
 
-# Stimulus and fixation properties
-stim = visual.Rect(win, width=2, height=2, fillColor='white')
-circle = visual.Circle(win, radius=6, edges=64, units='pix', lineColor=BGC, fillColor=BGC, pos=(0, 0))
-
-# ===================
-# Experiment
-# ===================
 try:
 
-    # Initial adaptation
+    # ----------- STEP 1: Initial adaptation ----------- #
     if adapstatus == "Adaptation":
         adaptstim = visual.Rect(win, width=2, height=2, fillColor=adaptcolor)
         adaptstim.draw()
@@ -85,19 +87,18 @@ try:
         win.flip()
         core.wait(long)
 
+    # Start the experiment
     for trial in trials:
 
-        # Draw the stimulus
+        # ----------- STEP 2: Draw stimulus and fixation ----------- #
         stim.fillColor = trial['rgb']
         stim.draw()
-
-        # Draw the fixation
         circle.draw()
 
         # Update the screen
         win.flip()
 
-        # Store the response
+        # ----------- STEP 3: Store the response ----------- #
         keys = event.waitKeys(keyList=['b', 'y'])
         respond = keys[0]
 
@@ -106,6 +107,15 @@ try:
             answer = '1'
         else: answer = "0"
 
+        # ----------- STEP 4: Inter-trial adaptation ----------- #
+        if adapstatus == "Adaptation":
+            adaptstim.draw()
+            circle.draw()
+            win.flip()
+            core.wait(short)
+
+        # ----------- STEP 5: Save the data ----------- #
+      
         # Add the response and correctness to the output
         trials.addData('response', respond)
         trials.addData('answer', answer)
@@ -113,18 +123,11 @@ try:
         # Trial completed
         exp.nextEntry()
 
-        # Inter-trial adaptation
-        if adapstatus == "Adaptation":
-            adaptstim.draw()
-            circle.draw()
-            win.flip()
-            core.wait(short)
-
 finally:
 
-    # Save and end the experiment
+    # Save the output
     exp.saveAsWideText(exp.dataFileName)
+  
     exp.close()
-
     win.close()
     core.quit()
