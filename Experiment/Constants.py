@@ -4,7 +4,7 @@ DISPSIZE = (1920, 1080)
 BGC = (-1, -1, -1)  # Black
 adaptcolor = (-1, -1, 1)
 
-reps = 1
+reps = 20
 
 # Adaptation time
 long = float(30)
