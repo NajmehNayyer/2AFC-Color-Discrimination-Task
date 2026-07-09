@@ -1,7 +1,6 @@
 from psychopy import visual, core, event, data, gui
-import numpy as np
 from constants import *
-from functions import *
+from functions import quit_experiment
 from colors import colors
 
 # ====================================
