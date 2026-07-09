@@ -1,6 +1,7 @@
 from psychopy import visual, core, event, data, gui
 import numpy as np
 from constants import *
+from functions import *
 
 # ====================================
 # Dialog Box
@@ -31,10 +32,6 @@ adapstatus = info.data[3]
 blue_steps = np.arange(0, 250, 25)
 yellow_steps = list(reversed(blue_steps))
 
-# Convert the color from the 0-255 RGB scale to the PsychoPy scale
-def rgb_to_psy(color):
-    return [c / 127.5 - 1 for c in color]
-
 # RGB of each spectrum
 blue = [rgb_to_psy([b, b, 255]) for b in blue_steps]
 yellow = [rgb_to_psy([255, 255, y]) for y in yellow_steps]
@@ -50,6 +47,9 @@ colors = [{'index': i, 'rgb': rgb, 'name': name} for i, (name, rgb) in enumerate
 # Window
 win = visual.Window(size=DISPSIZE, units='norm', fullscr=True, color=BGC)
 
+# Global 'escape' key for finishing the experiment
+event.globalKeys.add(key='escape', func=quit_experiment)
+
 # Instructions
 instruct = visual.TextStim(win, text="Look at the color with one eye.\n"
                                       "Press 'b' for blue, 'y' for yellow.\n"
@@ -58,8 +58,7 @@ instruct.draw()  # Write
 win.flip()  # Update the window
 
 # Quit with the "esc" key
-prim_keys = event.waitKeys(keyList=['space', 'escape'])
-if 'escape' in prim_keys: core.quit()
+event.waitKeys(keyList=['space'])
 
 # Define the trials
 trials = data.TrialHandler(colors, nReps=reps, method='random')
@@ -99,10 +98,8 @@ try:
         win.flip()
 
         # Store the response
-        keys = event.waitKeys(keyList=['b', 'y', 'escape'])
-        if keys == 'escape':
-            core.quit()
-        else: respond = keys[0]
+        keys = event.waitKeys(keyList=['b', 'y'])
+        respond = keys[0]
 
         # Check whether the answer is correct or not
         if (respond == 'y' and trial['name'] == 'yellow') or (respond == 'b' and trial['name'] == 'blue'):
