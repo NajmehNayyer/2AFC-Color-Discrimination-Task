@@ -4,27 +4,6 @@ from constants import *
 from functions import *
 
 # ====================================
-# Dialog Box
-# ====================================
-
-# Create the dialog box
-info = gui.Dlg(title="2AFC Color Discrimination")
-info.addField("Subject's Number:", required=True)
-info.addField("Adapting eye:", choices=["Both", "Left", "Right"], required=True)
-info.addField("Responder eye:", choices=["Both", "Left", "Right"], required=True)
-info.addField("Adaptation status:", choices=["No_Adaptation", "Adaptation"], required=True)
-
-# Display
-okdata = info.show()
-if not okdata: core.quit()
-
-# Save the data in variables
-ID = info.data[0]
-adapt_eye = info.data[1]
-respond_eye = info.data[2]
-adapstatus = info.data[3]
-
-# ====================================
 # Experiment Colors
 # ====================================
 
@@ -65,9 +44,30 @@ win.flip()  # Update the window
 stim = visual.Rect(win, width=2, height=2, fillColor='white')
 circle = visual.Circle(win, radius=6, edges=64, units='pix', lineColor=BGC, fillColor=BGC, pos=(0, 0))
 
-# ===================
+# ====================================
+# Dialog Box
+# ====================================
+
+# Create the dialog box
+info = gui.Dlg(title="2AFC Color Discrimination")
+info.addField("Subject's Number:", required=True)
+info.addField("Adapting eye:", choices=["Both", "Left", "Right"], required=True)
+info.addField("Responder eye:", choices=["Both", "Left", "Right"], required=True)
+info.addField("Adaptation status:", choices=["No_Adaptation", "Adaptation"], required=True)
+
+# Display
+okdata = info.show()
+if not okdata: core.quit()
+
+# Save the data in variables
+ID = info.data[0]
+adapt_eye = info.data[1]
+respond_eye = info.data[2]
+adapstatus = info.data[3]
+
+# ====================================
 # Experiment
-# ===================
+# ====================================
 
 # Define the trials
 trials = data.TrialHandler(colors, nReps=reps, method='random')
